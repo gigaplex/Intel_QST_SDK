@@ -1,0 +1,116 @@
+/****************************************************************************/
+/*                                                                          */
+/*  Module:         QstInstX.idl                                            */
+/*                                                                          */
+/*  Description:    Interface definition for the QstInstX  DLL.  This  DLL  */
+/*                  provides  an  ActiveX  encapsulation  of  the Intel(R)  */
+/*                  Quiet System Technology (QST) Instrumentation Library.  */
+/*                                                                          */
+/*  Notes:      1.  This file will  be  processed  by  the  MIDL  tool  to  */
+/*                  produce  type  library  (QstInstX.tlb) and marshalling  */
+/*                  code.                                                   */
+/*                                                                          */
+/****************************************************************************/
+
+/****************************************************************************/
+/*                                                                          */
+/*        Copyright (c) 2009, Intel Corporation. All Rights Reserved.       */
+/*                                                                          */
+/*  Redistribution and use in source and binary  forms,  with  or  without  */
+/*  modification, are permitted provided that the following conditions are  */
+/*  met:                                                                    */
+/*                                                                          */
+/*    - Redistributions of source code must  retain  the  above  copyright  */
+/*      notice, this list of conditions and the following disclaimer.       */
+/*                                                                          */
+/*    - Redistributions  in binary form must reproduce the above copyright  */
+/*      notice, this list of conditions and the  following  disclaimer  in  */
+/*      the   documentation  and/or  other  materials  provided  with  the  */
+/*      distribution.                                                       */
+/*                                                                          */
+/*    - Neither the name  of  Intel  Corporation  nor  the  names  of  its  */
+/*      contributors  may  be  used to endorse or promote products derived  */
+/*      from this software without specific prior written permission.       */
+/*                                                                          */
+/*  DISCLAIMER: THIS SOFTWARE IS PROVIDED BY  THE  COPYRIGHT  HOLDERS  AND  */
+/*  CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,  */
+/*  BUT  NOT  LIMITED  TO,  THE  IMPLIED WARRANTIES OF MERCHANTABILITY AND  */
+/*  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN  NO  EVENT  SHALL  */
+/*  INTEL  CORPORATION  OR  THE  CONTRIBUTORS  BE  LIABLE  FOR ANY DIRECT,  */
+/*  INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL  DAMAGES  */
+/*  (INCLUDING,  BUT  NOT  LIMITED  TO, PROCUREMENT OF SUBSTITUTE GOODS OR  */
+/*  SERVICES; LOSS OF USE, DATA, OR  PROFITS;  OR  BUSINESS  INTERRUPTION)  */
+/*  HOWEVER  CAUSED  AND  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,  */
+/*  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)  ARISING  */
+/*  IN  ANY  WAY  OUT  OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE  */
+/*  POSSIBILITY OF SUCH DAMAGE.                                             */
+/*                                                                          */
+/****************************************************************************/
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+    object,
+    uuid(AC8FD98E-D3A3-4CDF-962D-1CE45F871199),
+    dual,
+    nonextensible,
+    helpstring("IQstSensor Interface"),
+    pointer_default(unique)
+]
+interface IQstSensor : IDispatch{
+    [id(1), helpstring("method GetCount")] HRESULT GetCount([in] BYTE byType, [out,retval] BYTE* pbyCount);
+    [id(2), helpstring("method GetFunction")] HRESULT GetFunction([in] BYTE byType, [in] BYTE bySensor, [out,retval] BYTE* pbyFunction);
+    [id(3), helpstring("method IsRelative")] HRESULT IsRelative([in] BYTE byType, [in] BYTE bySensor, [out,retval] VARIANT_BOOL* pbRelative);
+    [id(4), helpstring("method GetNominal")] HRESULT GetNominal([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfNominal);
+    [id(5), helpstring("method GetNonCritHighThresh")] HRESULT GetNonCritHighThresh([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfNonCrit);
+    [id(6), helpstring("method GetCritHighThresh")] HRESULT GetCritHighThresh([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfCrit);
+    [id(7), helpstring("method GetNonRecovHighThresh")] HRESULT GetNonRecovHighThresh([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfNonRecov);
+    [id(8), helpstring("method GetNonCritLowThresh")] HRESULT GetNonCritLowThresh([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfNonCrit);
+    [id(9), helpstring("method GetCritLowThresh")] HRESULT GetCritLowThresh([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfCrit);
+    [id(10), helpstring("method GetNonRecovLowThresh")] HRESULT GetNonRecovLowThresh([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfNonRecov);
+    [id(11), helpstring("method SetHighThresh")] HRESULT SetHighThresh([in] BYTE byType, [in] BYTE bySensor, [in] FLOAT fNonCrit, [in] FLOAT fCrit, [in] FLOAT fNonRecov, [out,retval] VARIANT_BOOL* pbSuccess);
+    [id(12), helpstring("method SetLowThresh")] HRESULT SetLowThresh([in] BYTE byType, [in] BYTE bySensor, [in] FLOAT fNonCrit, [in] FLOAT fCrit, [in] FLOAT fNonRecov, [out,retval] VARIANT_BOOL* pbSuccess);
+    [id(13), helpstring("method GetHealth")] HRESULT GetHealth([in] BYTE byType, [in] BYTE bySensor, [out,retval] BYTE* pbyHealth);
+    [id(14), helpstring("method GetReading")] HRESULT GetReading([in] BYTE byType, [in] BYTE bySensor, [out,retval] FLOAT* pfReading);
+};
+[
+    object,
+    uuid(747DA812-D0D5-4C06-9169-1A97909CEC24),
+    dual,
+    nonextensible,
+    helpstring("IQstController Interface"),
+    pointer_default(unique)
+]
+interface IQstController : IDispatch{
+    [id(1), helpstring("method GetCount")] HRESULT GetCount([out,retval] BYTE* pbyCount);
+    [id(2), helpstring("method GetFunction")] HRESULT GetFunction([in] BYTE byController, [out,retval] BYTE* pbyFunction);
+    [id(3), helpstring("method GetHealth")] HRESULT GetHealth([in] BYTE byController, [out,retval] BYTE* pbyHealth);
+    [id(4), helpstring("method GetState")] HRESULT GetState([in] BYTE byController, [out,retval] BYTE* pbyState);
+    [id(5), helpstring("method GetDuty")] HRESULT GetDuty([in] BYTE byController, [out,retval] FLOAT* pfDuty);
+};
+[
+    uuid(1D145844-0D54-455C-BD5B-9EF1C4CA571F),
+    version(1.0),
+    helpstring("QstInstX 1.0 Type Library")
+]
+library QstInstXLib
+{
+    importlib("stdole2.tlb");
+    [
+        uuid(8C93FAD8-6139-46B1-8B14-031CC40A5A8D),
+        helpstring("QstSensor Class")
+    ]
+    coclass QstSensor
+    {
+        [default] interface IQstSensor;
+    };
+    [
+        uuid(0D102D19-FE55-45F8-9334-2D55B716BEBE),
+        helpstring("QstController Class")
+    ]
+    coclass QstController
+    {
+        [default] interface IQstController;
+    };
+};

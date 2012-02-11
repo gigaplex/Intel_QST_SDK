@@ -1,0 +1,245 @@
+
+------------------------------------------------------------------------------
+
+          Readme file for the Intel(R) Quiet System Technology (QST)
+                  Hard Disk Drive (HDD) Temperature Service
+
+       Copyright (C) 2008-2009, Intel Corporation. All Rights Reserved.
+
+------------------------------------------------------------------------------
+
+
+Table of contents:
+------------------
+
+1. Service Overview
+2. Service Setup
+3. Known Issues
+
+
+1. Service Overview
+-------------------
+
+In many systems, temperature sensors exist that cannot be directly accessed by
+Intel(R) QST. Only sensors that are embedded in the chipset or present in
+devices on the SST and PECI busses can be accessed directly. Situations could
+thus arise wherein specific hardware components begin overheating, yet
+Intel(R) QST remains unaware of the situation.
+
+If software running on the Host Processor somehow became aware of these
+situations, it could react by overriding Intel(R) QST's fan speed control.
+Doing so will prevent Intel(R) QST from properly responding to the temperature
+inputs that it does have access to, however. In order to better address this
+issue, the concept of a Virtual Temperature Monitor (VTM) has been introduced
+into the Intel(R) QST design. VTMs differ from standard Temperature Monitors
+in only one aspect: they have no physical temperature sensor associated with
+them. Instead, software running on the host processor must regularly provide
+these Monitors with updated temperature readings as changes occur.
+
+This package implements a Windows Service that makes temperature readings from
+Hard Disk Drives (HDDs) available to Intel(R) QST. It accomplishes this by
+communicating with the Self-Monitoring, Analysis and Reporting Technology
+(S.M.A.R.T.) that is provided by these HDDs. For those HDDs that support
+Temperature as one of their S.M.A.R.T. attributes, these temperatures can be
+regularly extracted and delivered to Intel(R) QST.
+
+The Service determines how many VTMs are enabled and configured to monitor
+HDD temperature sensors. If none are supported, the Service terminates itself.
+If there are more VTMs for HDDs than there are HDDs that expose their
+temperature, the Service will send 0 (zero) as the temperature reading to the
+extra VTMs. This will ensure that fans are not overridden to 100% because no
+temperature readings are available.
+
+
+2. Service Setup
+----------------
+
+Enabling the Intel(R) QST HDD Temperature Service is accomplished by first
+configuring Intel(R) QST to support HDD temperature monitoring and then
+installing the Intel(R) QST HDD Temperature Service.
+
+2a. Configuring Intel(R) QST for HDD Temperature Monitoring
+
+The first step in the installation process enables the monitoring of HDD
+temperatures in the Intel(R) QST configuration. This involves the enabling of
+VTMs for each hard drive and, presuming that fan speed control decision-making
+should involve these inputs, the enabling of Temperature Response Units for
+each VTM and the inclusion of the these responses in the fan weighting matrix.
+
+The first step in this process involves the determination of how many HDDs are
+present that can actually support temperature exposure. The package includes a
+tool, QstDiskTest, that will detail the (S.M.A.R.T.) capabilities of the HDDs
+present. Once you know how many drives can support temperature monitoring, you
+can begin the process of enabling support for them in the Intel(R) QST
+configuration...
+
+i.  Virtual Temperature Monitors need to be enabled and appropriately
+    configured for each HDD. An example of how to set up an entry in the
+    configuration file follows:
+
+            :
+            :
+        [TemperatureMonitor7]
+        Enabled=TRUE
+        Usage=15                            ;; Hard Drive Temperature
+        DeviceAddress=NONE                  ;; Virtual Temperature Monitor
+        GetReadingCommand=NONE              ;; Virtual Temperature Monitor
+        RelativeReadings=FALSE              ;; HDDs give absolute temperatures
+        RelativeConversionFactor=0.00       ;; no conversion necessary
+        AccuracyCorrectionSlope=1.00        ;; no adjustments necessary
+        AccuracyCorrectionOffset=0.00       ;; no adjustments necessary
+        TimeoutNonCritical=120
+        TimeoutCritical=240
+        TimeoutNonRecoverable=254
+        TemperatureNominal=32.00
+        TemperatureNonCritical=55.00        ;; Consult HDD specification for
+        TemperatureCritical=60.00           ;; information on the appropriate
+        TemperatureNonRecoverable=65.00     ;; temperature thresholds to use
+            :
+            :
+
+ii. Temperature Response Units need to be enabled and appropriately configured
+    for each HDD what will be involved in fan speed control decision-making.
+    An example of how to set up an entry in the configuration file entry
+    follows:
+
+            :
+            :
+        [TemperatureResponse7]
+        Enabled=TRUE
+        Usage=15                            ;; Hard Drive Temperature
+        TemperatureMonitor=7
+        SmoothingWindow=10
+        TemperatureLimit=60.00              ;; Consult HDD specification for
+        AllOnTemperature=65.00              ;; information on the appropriate
+                                            ;; temperature thresholds to use
+        ProportionalGain=1.00
+        IntegralGain=5.00
+        DerivativeGain=400.00
+        IntegralTimeWindow=5
+        DerivativeTimeWindow=15
+            :
+            :
+
+iii.Each fan controller that should be influenced by HDD temperatures needs to
+    have non-zero weightings assigned to its weighting parameters. This would
+    be similar to the following:
+
+            :
+            :
+        [FanController2]
+            :
+            :
+        TempResponse1Weighting=20.00
+        TempResponse2Weighting=5.00
+        TempResponse3Weighting=100.00
+        TempResponse4Weighting=0.00
+        TempResponse5Weighting=100.00
+        TempResponse6Weighting=25.00
+        TempResponse7Weighting=100.00       ;; Weighting for HDD cooling
+        TempResponse8Weighting=0.00
+        TempResponse9Weighting=0.00
+        TempResponse10Weighting=0.00
+        TempResponse11Weighting=0.00
+        TempResponse12Weighting=0.00
+            :
+            :
+
+2b. Installing the Intel(R) QST HDD Temperature Service
+
+The framework that was used to create the QST HDD Temperature Service provides
+support for using the Service executable for installing and uninstalling the
+Service into the Windows Service Manager. It also can be used to obtain
+information regarding whether or not the Service is installed and operational.
+While this is extremely helpful when debugging and testing Services, it is
+appropriate to use more sophisticated mechanisms for installing Services in
+production environments.
+
+A sample program, QstDiskTest, has been included with the Service. This
+program will scan for all hard drives that support S.M.A.R.T. and then
+determine whether these drives also support the exposure of a temperature
+attribute. The program produces a report on the drives that are present,
+detailing which can be supported by the Service. It also exits with a non-zero
+error code if there are drives that can be supperted by the Service. This
+error code can be used in scripting environments and installation programs to
+determine whether the installation of the Service is worthwhile.
+
+
+
+3. Known Issues List
+---------------------
+
+* Capabilities
+
+ -Title:        Little support for secondary HDD interfaces
+ -ID:           N/A
+ -Symptoms:     Temperature reporting capability not identified for HDDs
+                connected to secondary disk interfaces
+ -Cause:        The libSMART library provides support for SATA HDDs that are
+                connected to the SATA interfaces offered by the ICH and are
+                serviced by the Intel(R) Matrix Storage Technology Driver.
+                This includes drives with AHCI enabled and drives contained
+                within RAID arrays. The library also provides support for
+                IDE/PATA and SATA drives that are connected to secondary non-
+                Intel interfaces, provided the drivers for these interfaces
+                support the Microsoft/Compaq S.M.A.R.T. IOCTL interface. This
+                will not be the case for secondary RAID solutions, however.
+ -Impact:       HDDs connected to these secondary interfaces will not be
+                supported.
+ -Resolution:   No resolution planned. The user is at liberty to implement
+                support for any additional interfaces they deem useful.
+                Implementations that are provided to Intel will be considered
+                for inclusion in subsequent releases of this SDK.
+
+
+
+* Defects
+
+ -Title:        Fan Speed Spike when first temperature update sent to QST Core
+                for VTM
+ -ID:           2112308
+ -Symptoms:     When the Intel(R) QST HDD Temperature Service begins sending
+                temperature updates to the QST Subsystem, fan controllers that
+                are configured with fairly significant weightings of the HDD
+                temperature response will see a temporary (approx. 30 second)
+                spike in the duty cycle being output.
+ -Cause:        This is a bug in the QST firmware included in the Series 3 and
+                965 chipsets. It currently begins responding to HDD
+                temperatures immediately after power on, not from the point
+                when readings are actually available.
+ -Impact:       The temporary spike(s) are noticable but, once settled, the
+                response will properly follow temperature change from that
+                point onward.
+ -Resolution:   This bug has been addressed in the QST firmware for Series 4
+                and later chipsets.
+
+
+
+ -Title:        Support disabling of non-recoverable timeout for Virtual Temp
+                Monitors
+ -ID:           1004183
+ -Symptoms:     Temperature Monitors assigned to HDD temperature monitoring
+                enter the non-recoverable state and associated Fan Controllers
+                are overridden to 100% duty cycle.
+ -Cause:        As the title infers, the issue is that the QST firmware for
+                Series 3 and 965 chipsets do not support the disabling of
+                non-recoverable timeouts. As a result, if the startup of the
+                Windows O/S and/or the startup of the Intel(R) QST HDD
+                Temperature Service is delayed beyond the length of the
+                maximum non-recoverable timeout supported by QST (namely 254
+                seconds), the temperature monitors will timeout and enter the
+                non-recoverable state. This error then causes the Fan
+                Controllers to be overridden to protect the system from the
+                problem.
+ -Impact:       If the startup of the Windows O/S and/or the Intel(R) QST HDD
+                Temperature Service is delayed, the fan controllers will be
+                overridden to maximum duty cycle until temperature readings
+                become available.
+ -Resolution:   This bug has been addressed in the QST firmware for Series 4
+                and later chipsets.
+
+
+-------------------------------------------------------------------
+ * Other names and brands may be claimed as the property of others.
+
+

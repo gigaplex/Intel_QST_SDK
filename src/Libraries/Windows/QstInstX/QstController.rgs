@@ -1,0 +1,27 @@
+HKCR
+{
+	QstInstX.QstController.1 = s 'QstController Class'
+	{
+		CLSID = s '{0D102D19-FE55-45F8-9334-2D55B716BEBE}'
+	}
+	QstInstX.QstController = s 'QstController Class'
+	{
+		CLSID = s '{0D102D19-FE55-45F8-9334-2D55B716BEBE}'
+		CurVer = s 'QstInstX.QstController.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {0D102D19-FE55-45F8-9334-2D55B716BEBE} = s 'QstController Class'
+		{
+			ProgID = s 'QstInstX.QstController.1'
+			VersionIndependentProgID = s 'QstInstX.QstController'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{1D145844-0D54-455C-BD5B-9EF1C4CA571F}'
+		}
+	}
+}

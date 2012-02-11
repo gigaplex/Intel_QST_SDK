@@ -1,0 +1,27 @@
+HKCR
+{
+	QstInstX.QstSensor.1 = s 'QstSensor Class'
+	{
+		CLSID = s '{8C93FAD8-6139-46B1-8B14-031CC40A5A8D}'
+	}
+	QstInstX.QstSensor = s 'QstSensor Class'
+	{
+		CLSID = s '{8C93FAD8-6139-46B1-8B14-031CC40A5A8D}'
+		CurVer = s 'QstInstX.QstSensor.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {8C93FAD8-6139-46B1-8B14-031CC40A5A8D} = s 'QstSensor Class'
+		{
+			ProgID = s 'QstInstX.QstSensor.1'
+			VersionIndependentProgID = s 'QstInstX.QstSensor'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{1D145844-0D54-455C-BD5B-9EF1C4CA571F}'
+		}
+	}
+}

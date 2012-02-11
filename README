@@ -1,0 +1,1076 @@
+
+------------------------------------------------------------------------------
+
+       README file for the Intel(R) Quiet System Technology (QST) SDK.
+
+                       SDK Version 2.1; September 2009
+
+       Copyright (C) 2007-2009, Intel Corporation. All Rights Reserved.
+
+------------------------------------------------------------------------------
+
+
+
+Table of contents:
+------------------
+
+1.  Legal Information
+2.  Implementing Intel(R) QST-Aware Programs
+3.  How to Obtain Documentation
+4.  Intel(R) QST SDK Overview
+5.  Files Included in the SDK
+6.  Building Intel(R) QST-Aware Programs for Windows*
+7.  Building Intel(R) QST-Aware Programs for DOS
+8.  Building Intel(R) QST-Aware Programs for Linux
+9.  Building Intel(R) QST-Aware Programs for Solaris*
+10. Known Issues
+
+
+
+1. Legal Information
+--------------------
+
+Copyright (C) 2007-2009, Intel Corporation. All Rights Reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+  - Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+
+  - Neither the name of Intel Corporation nor the names of its contributors
+    may be used to endorse or promote products derived from this software
+    without specific prior written permission.
+
+DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL INTEL CORPORATION OR THE
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+UNLESS OTHERWISE AGREED IN WRITING BY INTEL, INTEL PRODUCTS ARE NOT DESIGNED
+NOR INTENDED FOR ANY APPLICATION IN WHICH THE FAILURE OF THE INTEL PRODUCT
+COULD CREATE A SITUATION WHERE PERSONAL INJURY OR DEATH MAY OCCUR.
+
+Intel may make changes to specifications and product descriptions at any time,
+without notice. Designers must not rely on the absence or characteristics of
+any features or instructions marked "reserved" or "undefined." Intel reserves
+these for future definition and shall have no responsibility whatsoever for
+conflicts or incompatibilities arising from future changes to them. The
+information here is subject to change without notice. Do not finalize a design
+with this information.
+
+The products described in this document may contain design defects or
+errors known as errata which may cause the product to deviate from published
+specifications. Current characterized errata are available on request.
+
+Intel(R) Active Management Technology requires the computer system to have
+an Intel(R) AMT-enabled chipset, network hardware and software, as well as
+connection with a power source and a corporate network connection. Setup
+requires configuration by the purchaser and may require scripting with the
+management console or further integration into existing security frameworks
+to enable certain functionality. It may also require modifications of
+implementation of new business processes. With regard to notebooks, Intel AMT
+may not be available or certain capabilities may be limited over a host OS-
+based VPN or when connecting wirelessly, on battery power, sleeping,
+hibernating or powered off.  For more information, see
+http://www.intel.com/technology/platform-technology/intel-amt.
+
+Intel and Intel vPro are trademarks of Intel Corporation in the U.S. and other
+countries.
+
+*Other names and brands may be claimed as the property of others.
+
+
+
+2. Implementing Intel(R) QST-Aware Programs
+-------------------------------------------
+
+Intel(R) QST is implemented as a firmware subsystem that runs on the Intel(R)
+Management Engine (ME). A special hardware interface, the Intel(R) Management
+Engine Interface (MEI), facilitates communication between host processor-based
+software and firmware subsystems running on the Intel(R) ME. Programs designed
+to expose the health monitoring and fan speed control capabilities of Intel(R)
+QST will use this interface to communicate with this subsystem.
+
+This SDK includes the source for building software libraries that simplify the
+implementation of programs wishing to expose the health monitoring and/or fan
+speed control capabilities of Intel(R) QST. These libraries implement two
+software layers:
+
+*   The Intel(R) QST Communications Layer (CL) simplifies communications with
+    Intel(R) QST. It removes the need for programs to interface directly with
+    the Intel(R) MEI driver and/or hardware and hides most of the complexities
+    of the Intel(R) ME communications protocols.
+
+*   The Intel(R) QST Instrumentation Layer (IL) simplifies the instrumentation
+    of the health monitoring capabilities of Intel(R) QST. It provides a
+    clean, hardware-independent interface for enumerating and exposing
+    information about the sensors and controllers monitored/managed by
+    Intel(R) QST. It removes the need for programs to deal with the command-
+    response packet protocol used during communications with Intel(R) QST.
+
+
+
+3. How to Obtain Documentation
+------------------------------
+
+The Intel(R) QST Programmer's Reference Manual is the definitive source for
+information regarding how programs interface with Intel(R) QST. It details how
+to communicate with Intel(R) QST using the low-level API and the raw command-
+response packet protocol that is exposed by the Intel(R) QST Communications
+Layer, as well as the high-level API that is used to enumerate and access the
+ health information that is organized and exposed by the Intel(R) QST IL.
+
+The Intel(R) QST Programmer's Reference Manual is distributed separately from
+the SDK. Contact your Intel Representative for more information regarding how
+you can obtain this document.
+
+
+
+4. Intel(R) QST SDK Overview
+----------------------------
+
+The Intel(R) QST SDK is typically packaged as a ZIP file. Using a tool
+appropriate to your development environment, extract the contents of this ZIP
+file to a directory on your hard drive. Be aware that this ZIP file contains
+subdirectories; be sure to specify that embedded directory (folder) names
+should be used during the extraction process.
+
+The SDK contains the following subdirectories:
+
+    src\Common          Provides source modules that are common to the various
+                        Intel(R) QST libraries, sample programs and services.
+
+    src\Include         Provides the standard Intel(R) QST header files.
+
+    src\Libraries       Provides source and project files for building the
+                        Intel(R) QST libraries. This includes script and/or
+                        make files that support the build of these libraries
+                        for DOS, Windows, Solaris and Linux environments.
+
+    src\Programs        Provides source and project files for the sample
+                        programs. This includes script and/or make files that
+                        support the build of these programs for the supported
+                        DOS, Windows, Solaris and Linux environments.
+
+    src\Services        Provides source and project files for the sample
+                        services. At this time, the sample services provided
+                        are specific to the Windows environment
+
+The SDK provides source and project files for a number of libraries. For all
+supported environments (DOS, Windows, Linux and Solaris), source and project
+files are provided for building the afore-mentioned Intel(R) QST CL and IL
+libraries. In addition, source and project files are provided for two
+additional libraries:
+
+    libSMART            This library, implemented as a Windows Dynamic Link
+                        Library (DLL), provides support for extracting
+                        temperature information from hard disk drives. It
+                        provides support for SATA hard disk drives that are
+                        managed by the Intel(R) Matrix Storage Technology
+                        device driver (including those contained within RAID
+                        arrays) and all other hard drives (SATA, IDE, etc.)
+                        that are managed by device drivers that implement
+                        support for Microsoft's S.M.A.R.T. IOCTL interface.
+
+                  Note: Since the source for this DLL is included in the SDK,
+                        the user may extend its capabilities to include
+                        support for the IOCTL interfaces of other device
+                        drivers. For example, support could be added for SCSI,
+                        SAS, SAN, etc. If you do develop such an extension,
+                        consider providing it to Intel for inclusion in
+                        subsequent releases of this SDK...
+
+    QstInstX            This library, also implemented as a DLL, provides an
+                        ActiveX encapsulation of the Intel(R) QST IL.
+                        This encapsulation provides language-independent
+                        interfaces that can be used in scripted (JavaScript,
+                        etc.) and managed (COM, .NET, etc.) environments.
+
+The SDK provides four sample programs:
+
+    BusTest             Demonstrates how to send commands directly to sensor
+                        and controller devices. This includes devices on the
+                        SST Bus, the PECI Bus (providing access to the digital
+                        thermal sensors (DTS) of Intel(R) Core(TM) 2 and later
+                        processors) and the chipset itself (an SST Device
+                        abstraction is built around the DTS in the ICH, G/MCH
+                        and/or PCH and the primary fan speed sensors and
+                        controllers in the ICH or PCH).
+
+    InstTest            Demonstrates how to make use of the services of the
+                        Intel(R) QST IL to expose readings/settings from the
+                        sensors and fan speed controllers that are being
+                        managed by Intel(R) QST.
+
+    InstXTest           Demonstrates how to use the services of the QstInstX
+                        ActiveX library, in this case using compiled
+                        JavaScript, to expose readings/settings from the
+                        sensors and fan speed controllers that are being
+                        managed by Intel(R) QST.
+
+    StatTest            Demonstrates how to communicate with Intel(R) QST
+                        using its command packet interface, in order to expose
+                        both the status of Intel(R) QST and the status of the
+                        sensors and controllers being managed by it.
+
+Note: To more effectively demonstrate how to develop Intel(R) QST-aware
+programs that can be easily retargeted to the various runtime environments,
+the BusTest, InstTest and StatTest sample programs restrict themselves to the
+use of only Standard C Library functions and basic text I/O. This should not
+be misconstrued to mean that environment-specific graphical applications
+cannot also be developed, however.
+
+The SDK provides three sample services. These are presently specific to the
+Windows runtime environment. Porting them to, for example, Linux or Solaris
+(daemon) environments is left as an exercise for the users. The sample
+services provided are:
+
+    QstDiskServ         Demonstrates how to effectively use Intel(R) QST's
+                        Virtual Temperature Monitoring capability, which
+                        allows temperature inputs that are not directly
+                        accessible by Intel(R) QST to be included in the fan
+                        speed control decision-making process. In this case,
+                        we are talking about temperature readings that are
+                        extracted from disk drives that support S.M.A.R.T.
+                        technology and expose a temperature attribute.
+
+                  Note: See file "Src/Services/QstDiskServ/README" for more
+                        information regarding the creation and use of the
+                        QstDiskServ Service.
+
+                  Note: The package also provides the source for a sample
+                        program, QstDiskTest, that can be used to determine
+                        which of the hard disk drives present can be supported
+                        by the service and expose temperature readings. In
+                        addition to outputting useful information about the
+                        hard drives that are present, the program, when
+                        terminating, will set the errorlevel variable to the
+                        number of hard drive(s) that can be supported by the
+                        service. This allows it to be used in installation
+                        scripts and programs to determine whether the Service
+                        should be installed...
+
+    QstProtServ         Demonstrates how to set up a service that will monitor
+                        the status of Intel(R) QST in the background. Should
+                        any Temperature Monitor enter the Non-Recoverable
+                        state (due to sensor failure or critically high
+                        temperature readings), the Service will cause the
+                        system to be powered down in an orderly manner,
+                        thereby protecting it from thermal damage.
+
+    QstProxyServ        In newer Windows releases (Windows* Vista*, Windows*
+                        7, etc.), the User Access Control (UAC) security
+                        facility will block non-privileged applications from
+                        executing if they attempt to communicate directly with
+                        device drivers. This folder demonstrates how to set
+                        up a service that can proxy Intel(R) QST IL and CL
+                        operations so that this issue can be avoided.
+
+                  Note: In order to utilize this Service, alternate
+                        implementations of the Intel(R) QST IL and CL DLLs
+                        that communicate with Intel(R) QST through this proxy
+                        service. Source for these alternate implementations
+                        (named QstProxyInst and QstProxyComm, respectively)
+                        is provided in the src\Libraries\Windows directory.
+
+
+
+5. Files Included in the SDK
+----------------------------
+
+The following files are included in the SDK:
+
+Root folder:
+
+    BuildAll.bat        Script file that will build DOS and Windows binaries
+                        for all libraries, programs and services.
+
+    COPYING             COPYING file.
+
+    makefile            Linux/Solaris makefile that copies the Intel(R) QST
+                        header files into /usr/include, builds & installs the
+                        Intel(R) QST CL and IL Libraries into /usr/lib
+                        (/lib/64 on 64-bit Solaris) and builds the sample
+                        programs.
+
+    README              This file.
+
+Folder src/Common:
+
+    AccessQst.c         Support module that instruments the sensors and
+                        controllers being managed by Intel(R) QST. It shows
+                        how to process information directly from Intel(R) QST,
+                        rather than use the Intel(R) QST IL.
+
+    AccessQst.h         Header file providing definitions and function proto-
+                        types for the AccessQst module.
+
+    Fan.ico             The famous Intel(R) QST Fan icon.
+
+    QstCompactConfig.c  Support module providing a routine that can be used to
+                        compact the Intel(R) QST Configuration Payload for
+                        subsequent storage or transmission to Intel(R) QST 2.0
+                        Subsystems.
+
+    QstCompactConfig.h  Header file providing definitions and function proto-
+                        type for the QstCompactConfig module.
+
+    QstConfigManipCommon.h Header file providing common definitions for the
+                        QstCompactConfig and QstExpandConfig modules.
+
+    QstExpandConfig.c   Support module providing a routine that can be used to
+                        expand the compacted Intel(R) QST Configuration
+                        Payload that has been read from a Binary Configuration
+                        File or extracted from Intel(R) QST 2.0 Subsystems.
+
+    QstExpandConfig.h   Header file providing definitions and function proto-
+                        type for the QstExpandConfig module.
+
+    UsageStr.c          Support module that provides routines exposing usage
+                        strings for the various sensor and controller types.
+
+    UsageStr.h          Header file providing definitions and function proto-
+                        types for the UsageStr module.
+
+Folder src/Common/Windows:
+
+    QstComm.c           Helper module that provides support for the dynamic
+                        linking of Windows programs with the Communications
+                        Layer (QstComm) DLL. Modules like this are not needed
+                        for programs that statically link to the DLL.
+
+    QstInst.c           Helper module that provides support for the dynamic
+                        linking of Windows programs with the Intel(R) QST IL
+                        (QstInst) DLL. Modules like this are not needed for
+                        programs that statically link to the DLL.
+
+    QstProxyComm.h      Header file providing definitions for communications
+                        with the Intel(R) QST Subsystem via the Proxy Service.
+
+    QstProxyInst.h      Header file providing definitions for communications
+                        with the Proxy Service to instrument the sensors and
+                        controllers being managed by Intel(R) QST.
+
+    RegAccess.c         Support module providing support for accessing the
+                        Windows Registry.
+
+    RegAccess.h         Header file providing definitions and function proto-
+                        types for the RegAccess module.
+
+    Service.c           Support module that provides a framework simplifying
+                        the task of implementing & managing Windows Services.
+                        This framework provides support for using a Service's
+                        executable to install and uninstall the service from
+                        the Windows Service Manager and to query whether or
+                        not the service is active. These extra capabilities
+                        are extremely helpful during the development of new
+                        services.
+
+    Service.h           Header file providing definitions and function proto-
+                        types for the Service framework.
+
+    SMART.c             Helper module that provides support for the dynamic
+                        linking of Windows programs with the libSMART DLL.
+
+    SMART.h             Header file providing definitions and function proto-
+                        types for the libSMART DLL.
+
+Folder src/Include:
+
+    Build.h             Header file defining the build number to be included
+                        in version strings produced by the next build of the
+                        SDK.
+
+    QstCfg.h            Header file providing definitions for the contents of
+                        Intel(R) QST 2.0 Binary Configuration Payloads.
+
+    QstCfgLeg.h         Header file providing definitions for the contents of
+                        legacy (1.x) Intel(R) QST Binary Configuration
+                        Payloads.
+
+    QstCmd.h            Header file providing definitions for Intel(R) QST 2.0
+                        and SST/PECI commands.
+
+    QstCmdLeg.h         Header file providing definitions for legacy (1.x)
+                        Intel(R) QST and SST/PECI commands.
+
+    QstComm.h           Header file providing definitions for Intel(R) QST 2.0
+                        Communications Layer.
+
+    QstInst.h           Header file providing definitions for Intel(R) QST IL.
+
+    typedef.h           Header file providing basic type definitions for
+                        Intel(R) QST.
+
+Folder src/Libraries:
+
+    BuildAll.bat        Script file that will build DOS and Windows binaries
+                        for all libraries.
+
+Folder src/Libraries/Common:
+
+    AccessQst.c         Intel(R) QST IL module that provides support for the
+                        enumeration and monitoring of the sensors and
+                        controllers being managed by Intel(R) QST. It is a
+                        custom version of the AccessQst common module.
+
+    AccessQst.h         Header file providing definitions and function proto-
+                        types for the AccessQst module.
+
+    BFileIO.c           Support module providing support for buffered file
+                        I/O. This is used to increase the performance of the
+                        INIFile module.
+
+    BFileIO.h           Header file providing definitions and function proto-
+                        types for the BFileIO module.
+
+    Critsect.h          Header file providing definitions and function proto-
+                        types for CritSect modules, which provide environment-
+                        specific support for critical code sections.
+
+    GlobMem.h           Header file providing definitions and function proto-
+                        types for GlobMem modules, which provide environment-
+                        specific support for global memory segments.
+
+    INIFile.c           Support module providing support for INI file I/O.
+
+    INIFile.h           Header file providing definitions and function proto-
+                        types for the INIFile module.
+
+    LegTranslationFuncs.c Support module providing functions that are used by
+                        the Communications Library to provide support for
+                        using the Intel(R) QST 2.0 command interface on
+                        Intel(R) QST 1.x Subsystems and/or using the Intel(R)
+                        QST 1.x command interface on Intel(R) QST 2.0
+                        Subsystems.
+
+    LegTranslationFuncs.h Header file providing definitions and function
+                        prototypes for the LegTranslationFuncs module.
+
+    MilliTime.c         Support module providing environment-specific timing
+                        functions with millisecond resolution.
+
+    MilliTime.h         Header file providing definitions and function proto-
+                        types for the MilliTime module.
+
+    QstDll.c            Main module for Intel(R) QST IL. It provides
+                        environment-specific support for the library to be
+                        initialized (as DLL on Windows, SO File on Linux and
+                        Solaris and as simple library on DOS).
+
+    QstDll.h            Header file providing definitions and function proto-
+                        types for the QstDll module.
+
+    QstInst.c           Intel(R) QST IL module that implements the public API
+                        of the library.
+
+Folder src/Libraries/DOS:
+
+    Build.bat           Script for building the DOS versions of the
+                        Intel(R) QST IL and CL libraries.
+
+    CritSect.c          Support module implementing DOS support for critical
+                        code sections.
+
+    GlobMem.c           Support module implementing DOS support for global
+                        memory segments.
+
+    heci.c              Support module implementing DOS support for the
+                        Intel(R) Management Engine Interface.
+
+    heci.h              Header file providing definitions and function proto-
+                        types for the heci module.
+
+    HeciMsg.h           Header file providing definitions for the connection-
+                        less communications protocol used in the DOS and BIOS
+                        environments.
+
+    QstComm.c           Main module of the Communications Library for the DOS
+                        environment.
+
+Folder src/Libraries/Linux:
+
+    CritSect.c          Support module implementing Linux support for critical
+                        code sections.
+
+    GlobMem.c           Support module implementing Linux support for global
+                        memory segments.
+
+    heci.c              Support module providing an interface to the Linux
+                        Intel(R) Management Engine Interface device driver.
+
+    heci.h              Header file providing definitions and function proto-
+                        ypes for the heci module.
+
+    makefile            Make file for building the Intel(R) QST IL and CL
+                        libraries (Shared-Object files) for Linux. Use command
+                        "make install" to build the libraries and have them
+                        installed to the /usr/lib directory.
+
+    QstComm.c           Main module of the Communications Library for the
+                        Linux environment.
+
+Folder src/Libraries/Solaris:
+
+    CritSect.c          Support module implementing Solaris support for
+                        critical code sections.
+
+    GlobMem.c           Support module implementing Solaris support for global
+                        memory segments.
+
+    heci.c              Support module providing an interface to the Solaris
+                        Intel(R) Management Engine Interface device driver.
+
+    heci.h              Header file providing definitions and function proto-
+                        ypes for the heci module.
+
+    makefile            Make file for building the Intel(R) QST IL and CL
+                        libraries (Shared-Object files) for Solaris. Use
+                        command "make install" to build the libraries and have
+                        them installed to the /usr/lib directory (/lib/64 on
+                        64-bit Solaris).
+
+    QstComm.c           Main module of the Intel(R) QST CL library for the
+                        Solaris environment.
+
+Folder src/Libraries/Windows:
+
+    Build.bat           Script for building the Windows versions of the
+                        Intel(R) QST IL and CL libraries (DLLs).
+
+    CompVerC.h          Header file providing versioning information for the
+                        Windows version of the Intel(R) QST CL library (DLL).
+
+    CompVerI.h          Header file providing versioning information for the
+                        Windows version of the Intel(R) QST CL library (DLL).
+
+    CritSect.c          Support module implementing Windows support for
+                        critical code sections.
+
+    CSMIIOCTL.h         Header file providing definitions for the CSMI IOCTL
+                        interface used by the Intel(R) Matrix Storage
+                        Technology driver.
+
+    CSMISMART.c         Module implementing support for extracting S.M.A.R.T.
+                        attribute information from HDDs being managed by the
+                        Intel(R) Matrix Storage Technology driver.
+
+    CSMISMART.h         Header file providing definitions and function proto-
+                        types for the CSMISMART module.
+
+    GlobMem.c           Support module implementing Windows support for global
+                        memory segments.
+
+    IDESMART.c          Module implementing support for extracting S.M.A.R.T.
+                        attribute information from HDDs being managed by
+                        drivers supporting the Microsoft S.M.A.R.T. IOCTLs.
+
+    IDESMART.h          Header file providing definitions and function proto-
+                        types for the CSMISMART module.
+
+    libSMART.c          Main module for the libSMART DLL, which provides
+                        support for extracting S.M.A.R.T. attribute
+                        information from HDDs.
+
+    libSMART.def        Interface definition file for the libSMART DLL.
+
+    libSMART.dsp        Visual Studio project file for the libSMART DLL.
+
+    libSMART.h          Header file providing definitions for extracting
+                        S.M.A.R.T. attribute information from HDDs.
+
+    libSMART.rc         Resource definitions file for the libSMART DLL.
+
+    QstComm.c           Main module of the Communications Library for the
+                        Windows environment.
+
+    QstComm.def         Interface definition file for the Windows version of
+                        the Intel(R) QST CL library (DLL).
+
+    QstComm.dsp         Visual Studio project file for the Windows version of
+                        the Intel(R) QST CL library (DLL).
+
+    QstComm.rc          Resource definitions file for the Windows version of
+                        the Intel(R) QST CL library (DLL).
+
+    QstCommD.c          Alternate Communications module for the Windows
+                        environment that provides an application with direct
+                        access to the Intel MEI Driver. It is used where
+                        access using the normal DLL is not possible (such as
+                        in a Service that sits under an alternate version of
+                        the QstComm DLL).
+
+    QstInst.def         Interface definition file for the Windows version of
+                        the Intel(R) QST IL library.
+
+    QstInst.dsp         Visual Studio project file for the Windows version of
+                        the Intel(R) QST IL library.
+
+    QstInst.rc          Resource definitions file for the the Windows version
+                        of the Intel(R) QST IL library.
+
+    QstProxyComm.c      Main module for the alternate (Proxy Server) version
+                        of the the Intel(R) QST CL library (DLL).
+
+    QstProxyComm.dsp    Visual Studio project file for the alternate (Proxy
+                        Server) version of the Intel(R) QST CL library (DLL).
+
+    QstProxyInst.c      Main module for the alternate (Proxy Server) version
+                        of the Intel(R) QST IL library (DLL).
+
+    QstProxyInst.dsp    Visual Studio project file for alternate (Proxy
+                        Server) version of the Intel(R) QST IL library (DLL).
+
+    resource.h          Resource header file for the Intel(R) QST CL and IL
+                        libraries.
+
+Folder src/Libraries/Windows/QstInstX:
+
+    Build.bat           Script file used ot build the QstInstX DLL.
+
+    CompVer.h           Header file providing versioning information for the
+                        QstInstX DLL.
+
+    QstController.cpp   Module implementing the Fan Speed Controller ActiveX
+                        Component.
+
+    QstController.h     Header file providing definitions for the Fan Speed
+                        Controller ActiveX Component.
+
+    QstController.rgs   Registration script for the Fan Speed Controller
+                        ActiveX Component.
+
+    QstInstX.cpp        Module implementing the QstInstX DLL public functions.
+
+    QstInstX.def        Definition file for the QstInstX DLL public functions.
+
+    QstInstX.idl        Interface definition file for the QstInstX DLL ActiveX
+                        component functions.
+
+    QstInstX.rc         Resource definitions file for the QstInstX DLL.
+
+    QstInstX.rgs        Registration script for the QstInstX DLL.
+
+    QstInstX.sln        Visual Studio solution file for the QstInstX DLL.
+
+    QstInstX.vcproj     Visual Studio project file for the QstInstX DLL.
+
+    QstSensor.cpp       Module implementing the Sensor ActiveX Component.
+
+    QstSensor.h         Header file providing definitions for the Sensor
+                        ActiveX Component.
+
+    QstSensor.rgs       Registration script for the Sensor ActiveX Component.
+
+    resource.h          Resource header file for the QstInstX DLL.
+
+    stdafx.cpp          Module supporting use of pre-compiled header files in
+                        the QstInstX DLL project.
+
+    stdafx.h            Defines the header files to be pre-compiled in the
+                        QstInstX DLL project.
+
+Folder src/Programs:
+
+    BuildAll.bat        Script file builds DOS and Windows executables for the
+                        sample programs.
+
+Folder src/Programs/BusTest:
+
+    Build.bat           Script file builds DOS and Windows executables for the
+                        SST/PECI Bus Access sample program.
+
+    BusTest.c           Main module for the SST/PECI Bus Access Demo. It
+                        demonstrates how to send commands directly to SST/PECI
+                        devices.
+
+    BusTest.dsp         Visual Studio project file for the Windows version of
+                        the SST/PECI Bus Access Demo.
+
+    makefile            Make file for building Linux executable for the
+                        SST/PECI Bus Access demo.
+
+Folder src/Programs/InstTest:
+
+    Build.bat           Script file builds DOS and Windows executables for the
+                        Instrumentation Layer sample program.
+
+    InstTest.c          Main module for the Instrumentation Layer Demo. It
+                        provides a basic demonstration of how to use the
+                        Instrumentation Layer to expose information and
+                        readings from the sensors and controllers being
+                        managed by Intel(R) QST.
+
+    InstTest.dsp        Visual Studio project file for the Windows version of
+                        the Instrumentation Layer Demo.
+
+    makefile            Make file for building Linux executable for the
+                        Instrumentation Layer Demo.
+
+Folder src/Programs/InstTestX:
+
+    Build.bat           Script file builds Windows executable for the
+                        Intel(R) QST ActiveX Instrumentation Components sample
+                        program.
+
+    InstXTest.js        Sample program, implemented in Compiled Javascript,
+                        which demonstrates how to make use of the Intel(R) QST
+                        ActiveX Instrumentation Components.
+
+Folder src/Programs/StatTest:
+
+    Build.bat           Script file builds DOS and Windows executables for the
+                        Intel(R) QST status sample program.
+
+    makefile            Make file for building Linux executable for the
+                        Intel(R) QST Status sample.
+
+    StatTest.c          Main module for the Intel(R) QST Status sample
+                        program. It demonstrates how to get basic status info
+                        from Intel(R) QST.
+
+    StatTest.dsp        Visual Studio project file for the Windows version of
+                        the Intel(R) QST Status sample program.
+
+Folder Services:
+
+    BuildAll.bat        Script file for building Windows executables for the
+                        sample Services.
+
+Folder src/Services/QstDiskServ:
+
+    CompVer.h           Header file providing versioning information for the
+                        QstDiskServ Service.
+
+    Disk.ico            Icon for QstDiskServ Service.
+
+    QstDiskServ.c       Main module for the QstDiskServ Service.
+
+    QstDiskServ.dsp     Visual Studio project file for the QstDiskServ
+                        Service.
+
+    QstDiskServ.h       Header file providing definitions and function proto-
+                        types for the QstDiskServ Service.
+
+    QstDiskServ.rc      Resource definition file for the QstDiskServ Service.
+
+    QstDiskTest.c       Main module for the QstDiskTest program.
+
+    QstDiskTest.dsp     Visual Studio project file for the QstDiskTest
+                        program.
+
+    QstDiskTest.rc      Resource definitions file for the QstDiskTest program.
+
+    README              Provides additional information about the creation and
+                        use of the QstDiskServ Service and the QstDiskTest
+                        program.
+
+    resource.h          Resource header file for the QstDiskServ service and
+                        the QstDiskTest program.
+
+    SmartTemp.c         Module providing support for the extraction of
+                        temperature readings from HDDs.
+
+    VtmUpdate.c         Module providing support for delivering temperature
+                        updates to the Virtual Temperature Monitors defined
+                        within the Intel(R) QST configuration.
+
+Folder src/Services/QstProtServ:
+
+    QstProtServ.c       Main module for the QstProtServ Service.
+
+    QstProtServ.dsp     Visual Studio project file for the QstProtServ
+                        Service.
+
+    QstProtServ.h       Header file providing definitions and function proto-
+                        types for the QstProtServ Service.
+
+    QstProtServ.rc      Resource definition file for the QstProtServ Service.
+
+    resource.h          Resource header file for the QstProtServ service.
+
+Folder src/Services/QstProxyServ:
+
+    CompVer.h           Header file providing versioning information for the
+                        QstProxyServ Service.
+
+    QstProxyServ.c      Main source module for the QstProxyServ Service.
+
+    QstProxyServ.dsp    Visual Studio project file for the QstProxyServ
+                        Service.
+
+    QstProxyServ.rc     Resource definition file for the QstProxyServ Service.
+
+    resource.h          Resource header file for the QstProxyServ service.
+
+
+
+6. Building Intel(R) QST-Aware Programs for Windows
+---------------------------------------------------
+
+The Intel(R) QST Programmer's Reference Manual fully documents how to
+implement Intel(R) QST-aware programs for the Windows environment. This
+includes information regarding how to use the Windows versions of the
+Instrumentation and Communications Layers, which are both implemented as
+Windows Dynamic Link Libraries (DLLs).
+
+Windows executables for many of the libraries, services and sample programs
+have been built and tested using the Visual Studio 6 package. Modification of
+the build scripts and upgrade of the project files to utilize newer versions
+of Visual Studio is left to the user. Visual Studio .NET 2003 and Visual
+Studio 2005 are known to be able to successfully convert these project files.
+
+In order to build binaries for the Instrumentation and Communications Layer
+DLLs, you need to invoke batch file Build.bat within subdirectory
+"src\Libraries\Windows". The resulting DLL files (QstComm.dll and QstInst.dll,
+located in subdirectory "src\Libraries\Windows\Release", should be distributed
+with your Intel(R) QST-aware applications.
+
+
+
+7. Building Intel(R) QST-Aware Programs for DOS
+-----------------------------------------------
+
+This section presents an introduction to implementing Intel(R) QST-aware
+programs for DOS environments. It documents the differences in the
+implementation and usage of the Instrumentation and Communications libraries
+from that documented for the Windows environment within the Intel(R) QST
+Programmer's Reference Manual.
+
+7a. Development Environment Setup
+
+The development of DOS programs may actually be performed in any number of
+environments. The build scripts included in the SDK, however, presume that a
+Windows environment will be used. Building DOS programs requires Open Watcom,
+the open source version of Sybase's Watcom C/C++ and Fortran compiler
+products. This package can be obtained from http://www.openwatcom.org. The
+batch files for the sample programs support this package being installed to
+either of two locations, "C:\Program Files\Watcom" or "C:\Watcom". If you
+install the package to a different location, you will need to modify these
+batch files.
+
+7b. Communicating with Intel(R) QST
+
+In the DOS environment, the Intel(R) QST Communication Layer is implemented as
+a simple function library that is statically linked into Intel(R) QST-aware
+programs. A busy-wait driver for the Intel(R) Management Engine Interface is
+built into this library. To provide the most flexibility, versions of this
+library are provided for both register-based (QstComm6r.lib) and stack-based
+(QstComm6s.lib) parameter passing.
+
+In order to support access to the memory-mapped registers of the Intel(R)
+Management Engine Interface, software must be built for a 32-bit address space
+and must be supported by a DOS Extender that overcomes DOS' inherent 640 KB
+memory limit. The Open Watcom package, which supports 32-bit flat model
+compilation and has built-in support for multiple DOS extenders, was thus
+chosen to support the DOS environment.
+
+The Communications Layer Library provides support for a single connection
+between the calling program and Intel(R) QST. Because this library is
+implemented as a simple function library, function QstInitialize() must be
+invoked to initialize the library during program startup and function
+QstCleanup() must be invoked to clean up after the library during program
+shutdown. In between, the primary function, QstCommand(), may be used as
+necessary to send Command Packets to Intel(R) QST and receive the associated
+Response Packets.
+
+7c. Instrumenting Intel(R) QST
+
+In the DOS environment, the Intel(R) QST Instrumentation Layer is also
+implemented as a simple function library. Versions of the library are provided
+for both the register-based (QstInst6r.lib) and stack-based (QstInst6s.lib)
+parameter-passing models.
+
+Because the Instrumentation Layer Library is implemented as a simple function
+library, function QstInstInitialize() must be invoked to initialize the
+library during program startup and function QstInstCleanup() must be invoked
+to clean up after the library during program shutdown. In between, the other
+functions of the Instrumentation Layer may be invoked as required.
+
+When linking either version of the Instrumentation Layer Library into a
+Intel(R) QST-aware DOS program, the appropriate version of the Communications
+Layer Library must also be linked into the program, even if the Communication
+Layer functions are not invoked. In this case, the program is not required to
+invoke QstInitialize() or QstCleanup(); the Instrumentation Layer will take
+care of this requirement. The program may still invoke QstCommand() if
+required, however.
+
+7d. Notes on DOS Extender Usage
+
+The Intel(R) QST Tools for DOS, as well as the SDK's batch files for building
+the sample programs, target these programs for execution in the environment
+offered by the PMode/W DOS extender. This extender is fully encapsulated
+within the program's executable. As a result, no additional files are needed
+to support the program's execution.
+
+
+
+8. Building Intel(R) QST-Aware Programs for Linux
+-------------------------------------------------
+
+This section presents an introduction to implementing Intel(R) QST-aware
+programs for the Linux environment. It documents the differences in the
+implementation and usage of the Instrumentation and Communications libraries
+from that documented for the Windows environment in the Intel(R) QST
+Programmer's Reference Manual.
+
+8a. Development Environment Setup
+
+In order to simplify the building of Intel(R) QST-aware Linux programs,
+portions of the SDK should be installed to standard directories - header files
+to /usr/include and Shared Object (SO) files to /usr/lib (or /usr/lib64). A
+makefile that builds these SO files and performs this installation is provided
+in the SDK's root. Because of the folders that this makefile touches, you must
+have root privilages when you execute it.
+
+If your Linux distribution does not already contain a device driver for the
+Intel(R) Management Engine Interface, you can download its source package from
+SourceForge.net and build and install it yourself. The package provides
+instructions and make and script files supporting this process. A link to this
+package is provided at http://www.OpenAMT.org, a site providing open source
+drivers and software for Intel(R) Active Management Technology (AMT).
+
+8b. Communicating with Intel(R) QST
+
+The Linux Communications Layer is implemented as a Shared Object (SO) file
+(libQstComm.so), the Linux analog for a Windows DLL. When this SO file is
+loaded into memory, it automatically initializes itself. Thus, once the SO
+file is loaded, programs can immediately begin calling QstCommand() or
+QstCommand2(). Similarly, when the SO file is unloaded, it automatically
+cleans up after itself. A program wishing to have the Communications Layer SO
+file explicitly loaded with the program should statically link the SO file.
+
+It is also possible for a program to dynamically load the Communications Layer
+SO file. This is accomplished using the dlopen API. Function dlopen() is used
+to load the SO file. Once loaded, function dlsym() is used to obtain pointers
+to functions QstCommand() and/or QstCommand2(). QstCommand() and/or
+QstCommand2() can then be invoked indirectly through this pointer as
+necessary. Finally, when the program is finished with the SO file, it unloads
+it using function dlclose().
+
+For more information regarding SO files, consult the Program Library HOWTO.
+Additional information is included in the C++ dlopen mini HOWTO. Both can be
+downloaded from The Linux Documentation Project (http://tldp.org/docs.html).
+
+7c. Instrumenting Intel(R) QST
+
+The Linux Instrumentation Layer, like the Communications Layer, is implemented
+as a SO file (libQstInst.so). Since it also initializes itself when being
+loaded and cleans up after itself when being unloaded, no initialization or
+cleanup functions need to be invoked by the user's application.
+
+The Communications Layer SO file is statically linked to the Instrumentation
+Layer SO file. As a result, the Communications Layer SO file will be
+automatically loaded when the Instrumentation Layer SO file is loaded. Thus,
+programs statically linking the Instrumentation Layer SO file do not need to
+(also) statically link the Communications Layer SO file.
+
+
+
+9. Building Intel(R) QST-Aware Programs for Solaris
+---------------------------------------------------
+
+This section presents an introduction to implementing Intel(R) QST-aware
+programs for the Solaris environment. It documents the differences in the
+implementation and usage of the Instrumentation and Communications libraries
+from that documented for the Windows environment in the Intel(R) QST
+Programmer's Reference Manual.
+
+9a. Development Environment Setup
+
+In order to simplify the building of Intel(R) QST-aware Solaris programs,
+portions of the SDK should be installed to standard directories - header files
+to /usr/include and Shared Object (SO) files to /usr/lib (or /usr/lib/64). A
+makefile that performs this installation is provided in the SDK's root.
+Because of the folders that this makefile touches, you must have root
+privileges when you execute it.
+
+If your Solaris distribution does not already contain a device driver for the
+Intel(R) Management Engine Interface, you can download its source package from
+SourceForge.net and build and install it yourself. The package provides
+instructions and make/script files supporting this process. A link to this
+package is provided at http://www.OpenAMT.org, a site providing open source
+drivers and software for Intel(R) Active Management Technology (AMT).
+
+9b. Communicating with Intel(R) QST
+
+The Solaris Communications Layer is implemented as a Shared Object (SO) file
+(libQstComm.so). When this SO file is loaded into memory, it automatically
+initializes itself. Thus, once the SO file is loaded, programs can immediately
+begin calling QstCommand() or QstCommand2(). Similarly, when the SO file is
+unloaded, it automatically cleans up after itself. A program wishing to have
+the Communications Layer SO file explicitly loaded with the program will
+statically link the SO file.
+
+It is also possible for a program to dynamically load the Communications Layer
+SO file. This is accomplished using the dlopen API. Function dlopen() is used
+to load the SO file. Once loaded, function dlsym() is used to obtain pointers
+to functions QstCommand() and/or QstCommand2(). QstCommand() and/or
+QstCommand2() can then be invoked indirectly through this pointer as required.
+Finally, when the program is finished with the SO file, it unloads it using
+function dlclose().
+
+9c. Instrumenting Intel(R) QST
+
+The Solaris Instrumentation Layer, like the Communications Layer, is
+implemented as a SO file (libQstInst.so). Since it also initializes itself
+when being loaded (and cleans up after itself when being unloaded), no
+initialization or cleanup functions need to be invoked by the program.
+
+The Communications Layer SO file is statically linked to the Instrumentation
+Layer SO file. As a result, the Communications Layer SO file will be
+automatically loaded when the Instrumentation Layer SO file is loaded. Thus,
+programs statically linking the Instrumentation Layer SO file do not need to
+(also) statically link the Communications Layer SO file.
+
+
+
+10. Known Issues List
+---------------------
+
+* Sample Windows Services
+
+ -Title:        Undesired side-effect of Hard Disk Drive Temperature
+                Monitoring Service
+ -ID:           QST-SDK-0001
+ -Symptoms:     Hard disk drives continue to spin even if the drive idle time
+                threshold has been surpassed.
+ -Cause:        Any S.M.A.R.T. query delivered to a hard disk drive is
+                considered by the drive to be an active operation, thereby
+                causing that drive to spin up if it had been stopped. Since
+                the Hard Disk Drive Temperature Monitoring Service is
+                regularly quering the hard disk drive(s), they will never have
+                an opportunity to spin down and stay there for any appreciable
+                amount of time.
+ -Impact:       Disaffects idle system power and increases wear on hard disk
+                drives.
+ -Resolution:   The Hard Drive Temperature Monitoring Service's S.M.A.R.T.
+                Library needs to be modified to query Windows for the Hard
+                Disk Drive Stopped State and not send S.M.A.R.T. queries to
+                hard disk drive(s) while they are spun down. Support for this
+                capability is currently being left as an exercise for the
+                user.
+
+
+* Category
+
+ -Title:
+ -ID:
+ -Symptoms:
+ -Cause:
+ -Impact:
+ -Resolution:
+
+
