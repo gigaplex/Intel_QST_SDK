@@ -74,28 +74,30 @@
 
 #pragma pack(1)
 
-// IOCTL data
-
-typedef struct _HECI_IOCTL_DATA
-{
-    UINT32              dwLength;
-    void *              pvData;
-
-} HECI_IOCTL_DATA;
-
-// IOCTL Definitions
-
-#define IOCTL_HECI_GET_VERSION    _IOWR( 'H', 0x800, HECI_IOCTL_DATA )
-#define IOCTL_HECI_CONNECT_CLIENT _IOWR( 'H', 0x801, HECI_IOCTL_DATA )
-
 // Client connection data
 
 typedef struct _HECI_CLIENT_DATA
 {
     UINT32              dwMaxMessageSize;
     UINT8               byProtocolVersion;
-
+    UINT8               _reserved[3];
 } HECI_CLIENT_DATA;
+
+// IOCTL data
+
+typedef struct _HECI_IOCTL_DATA
+{
+    union
+    {
+        GUID             in_client_guid;
+        HECI_CLIENT_DATA out_client_data;
+    };
+} HECI_IOCTL_DATA;
+
+// IOCTL Definitions
+
+#define IOCTL_HECI_GET_VERSION    _IOWR( 'H', 0x800, HECI_IOCTL_DATA )
+#define IOCTL_HECI_CONNECT_CLIENT _IOWR( 'H', 0x801, HECI_IOCTL_DATA )
 
 #pragma pack(0)
 
@@ -141,17 +143,14 @@ size_t HeciConnect( const GUID *pSubsysGUID )
 
     // Open a connection to the driver
 
-    hDriver = open( "/dev/heci", O_RDWR );
+    hDriver = open( "/dev/mei", O_RDWR );
 
     if( hDriver == -1 )
         return( -1 );
 
     // Send a subsystem connection request
 
-    stIOCTL.dwLength = sizeof(GUID);
-    stIOCTL.pvData   = byData;
-
-    memcpy( byData, pSubsysGUID, sizeof(GUID) );
+    memcpy( &stIOCTL.in_client_guid, pSubsysGUID, sizeof(GUID) );
 
     if( ioctl( hDriver, IOCTL_HECI_CONNECT_CLIENT, &stIOCTL ) )
     {
