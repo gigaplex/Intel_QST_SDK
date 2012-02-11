@@ -135,8 +135,6 @@ void HeciDisconnect( void )
 
 size_t HeciConnect( const GUID *pSubsysGUID )
 {
-    char                byData[sizeof(GUID)];
-    HECI_CLIENT_DATA    *pstClient = (HECI_CLIENT_DATA *)byData;
     HECI_IOCTL_DATA     stIOCTL;
 
     HeciDisconnect();
@@ -160,7 +158,7 @@ size_t HeciConnect( const GUID *pSubsysGUID )
 
     // Create a buffer for receiving response packets
 
-    tMaxReceive = (size_t)pstClient->dwMaxMessageSize;
+    tMaxReceive = (size_t)stIOCTL.out_client_data.dwMaxMessageSize;
 
     pvReceiveBuff = malloc( tMaxReceive );
 
